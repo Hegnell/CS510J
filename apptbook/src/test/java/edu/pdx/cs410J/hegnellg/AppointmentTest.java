@@ -10,7 +10,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class AppointmentTest {
 
-  @Test(expected = UnsupportedOperationException.class)
+/*  @Test(expected = UnsupportedOperationException.class)
   public void getBeginTimeStringNeedsToBeImplemented() {
     Appointment appointment = new Appointment();
     appointment.getBeginTimeString();
@@ -26,6 +26,6 @@ public class AppointmentTest {
   public void forProject1ItIsOkayIfGetBeginTimeReturnsNull() {
     Appointment appointment = new Appointment();
     assertThat(appointment.getBeginTime(), is(nullValue()));
-  }
+  }*/
 
 }
