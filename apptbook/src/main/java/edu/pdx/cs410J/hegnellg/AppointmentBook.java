@@ -1,7 +1,7 @@
 // Gustaf Hegnell
-// Project 1
+// Project 2
 // CS 510J
-// 7/6/2016
+// 7/13/2016
 
 package edu.pdx.cs410J.hegnellg;
 

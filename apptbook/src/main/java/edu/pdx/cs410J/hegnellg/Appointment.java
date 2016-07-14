@@ -1,7 +1,7 @@
 // Gustaf Hegnell
-// Project 1
+// Project 2
 // CS 510J
-// 7/6/2016
+// 7/13/2016
 
 package edu.pdx.cs410J.hegnellg;
 
@@ -15,9 +15,9 @@ import edu.pdx.cs410J.AbstractAppointment;
  */
 public class Appointment extends AbstractAppointment {
 
-    private String beginTimeString;
-    private String endTimeString;
-    private String description;
+    private String beginTimeString; // The Start time of the appointment in String form.
+    private String endTimeString;   // The end time of the appointment in String form.
+    private String description;     // A description of the appointment.
 
     /**
      * Default constructor for an Appointment.
