@@ -1,7 +1,7 @@
 // Gustaf Hegnell
-// Project 2
+// Project 3
 // CS 510J
-// 7/13/2016
+// 7/20/2016
 
 package edu.pdx.cs410J.hegnellg;
 
@@ -11,7 +11,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- * The main class for the CS410J appointment book Project 2, this class parses the command line arguments
+ * The main class for the CS410J appointment book Project 3, this class parses the command line arguments
  * provided to the program, creates an appointment, creates ann appointment book, and then puts that
  * appointment in the appointment book. It gets the owner of the appointment book, description, and time of
  * the appointment all from the command line. Providing the -README option will print out a description of the program
@@ -19,7 +19,7 @@ import java.util.*;
  *
  * @author Gustaf Hegnell
  */
-public class Project2 {
+public class Project3 {
 
     /**
      * The main method, does all of the command line parsing and creates the appointment using those details.
@@ -42,9 +42,12 @@ public class Project2 {
         boolean printDescription = false;
         boolean doneWithOptions = false;
         boolean textFileOption = false;
+        boolean prettyPrintOption = false;
+        boolean standardOut = false;
         ArrayList<String> options = new ArrayList<>();
         ArrayList<String> appointmentArgs = new ArrayList<>();
         String fileName = null;
+        String prettyFile = null;
 
         // Go through the command line arguments and split them into options or args.
         for (int i = 0; i < args.length; i++) {
@@ -63,6 +66,17 @@ public class Project2 {
                         // Check for weird situation where they forget to provide filename with option.
                         if (fileName.startsWith("-")) {
                             exitWithError("Looks like you forgot to provide a file name. Usage is -textFile filename.");
+                        }
+                    } else if (arg.equals("-pretty")) {
+                        prettyPrintOption = true;
+                        prettyFile = args[++i];
+                        // Check for weird situation where they forgot to provide pretty file destiantion.
+                        if (prettyFile.startsWith("-")) {
+                            if (prettyFile.equals("-")) {
+                                standardOut = true;
+                            } else {
+                                exitWithError("Looks like you forgot to provide a destination for pretty printing.");
+                            }
                         }
                     } else {
                         options.add(arg);
@@ -87,9 +101,9 @@ public class Project2 {
         }
 
         // Currently there has to be exactly six arguments provided.
-        if (appointmentArgs.size() > 6) {
+        if (appointmentArgs.size() > 8) {
             exitWithError("Too many args provided. Arguments are owner, description, begin time, and end time (in that order).");
-        } else if (appointmentArgs.size() < 6) {
+        } else if (appointmentArgs.size() < 8) {
             exitWithError("Too few args provided. Arguments are owner, description, begin time, and end time (in that order).");
         }
 
@@ -98,15 +112,17 @@ public class Project2 {
         String description = appointmentArgs.get(1);
         String beginDateString = appointmentArgs.get(2);
         String beginTimeString = appointmentArgs.get(3);
-        String endDateString = appointmentArgs.get(4);
-        String endTimeString = appointmentArgs.get(5);
+        String beginTimeAMPM = appointmentArgs.get(4);
+        String endDateString = appointmentArgs.get(5);
+        String endTimeString = appointmentArgs.get(6);
+        String endTimeAMPM = appointmentArgs.get(7);
 
 
         // Perform error checking on the dates and times provided.
-        if (!validTime(beginTimeString)) {
-            exitWithError("The begin time was incorrectly formatted. Valid format is hh:mm and only real times are accepted.");
-        } else if (!validTime(endTimeString)) {
-            exitWithError("The end time was incorrectly formatted. Valid format is hh:mm and only real times are accepted.");
+        if (!validTime(beginTimeString + " " + beginTimeAMPM)) {
+            exitWithError("The begin time was incorrectly formatted. Valid format is 12 hour times (1:19 pm) and only real times are accepted.");
+        } else if (!validTime(endTimeString + " " + endTimeAMPM)) {
+            exitWithError("The end time was incorrectly formatted. Valid format is 12 hour times (1:19 pm) and only real times are accepted.");
         } else if (!validDate(beginDateString)) {
             exitWithError("The begin date was incorrectly formatted. Valid dates are m/d/yyyy or mm/dd/yyyy");
         } else if (!validDate(endDateString)) {
@@ -127,7 +143,7 @@ public class Project2 {
                 try {
                     textParser = new TextParser(file, owner);
                 } catch (FileNotFoundException e) {
-                    e.printStackTrace();
+                    exitWithError("File was not found." + e.getMessage());
                 }
                 // Get an appointment book from the parser.
                 try {
@@ -143,13 +159,33 @@ public class Project2 {
         }
 
         // Create the new appointment and add it to the book.
-        Appointment appointment = new Appointment(beginDateString + " " + beginTimeString, endDateString + " " + endTimeString, description);
+        Appointment appointment = new Appointment(beginDateString + " " + beginTimeString + " " + beginTimeAMPM, endDateString + " " + endTimeString + " " + endTimeAMPM, description);
         appointmentBook.addAppointment(appointment);
 
         // If -print option was provided, print out description of new appointment.
         if (printDescription) {
-            System.out.println("\nDescription of created appointment:\n");
+            System.out.println("\nDescription of newly created appointment:\n");
             System.out.println(appointment);
+        }
+
+        // If pretty print option was provided, print out the book to the desired destination.
+        if (prettyPrintOption) {
+            if (standardOut) {
+                PrettyPrinter prettyPrinter = new PrettyPrinter();
+                try {
+                    prettyPrinter.dump(appointmentBook);
+                } catch (IOException e) {
+                    exitWithError("There was an error pretty printing. " + e.getMessage());
+                }
+            } else {
+                File pFile = new File(prettyFile);
+                try {
+                    PrettyPrinter prettyPrinter = new PrettyPrinter(pFile);
+                    prettyPrinter.dump(appointmentBook);
+                } catch (IOException e) {
+                    exitWithError("There was an error creating the pretty file.");
+                }
+            }
         }
 
         // If textfile option was provided, need to dump the book back to the file.
@@ -166,11 +202,11 @@ public class Project2 {
     /**
      *  This function takes a time and checks whether it is valid or not.
      *
-     * @param time A string representation of the time in hh:mm format.
+     * @param time A string representation of the time in 12 hour format.
      * @return A boolean, true if the time is a valid time in the correct format, false otherwise.
      */
     private static boolean validTime(String time) {
-        return time.matches("([01]\\d|2[0-3]|[0-9]):[0-5]\\d");
+        return time.matches("(1[0-2]|[0-9]):[0-5]\\d\\s(am|pm|AM|PM)");
     }
 
     /**
@@ -198,23 +234,25 @@ public class Project2 {
      *  This function prints out a decription of the program and exits afterwards.
      */
     private static void exitWithReadme() {
-        System.out.println("\n\nGustaf Hegnell - Project 2\n");
+        System.out.println("\n\nGustaf Hegnell - Project 3\n");
         System.out.println("This is a small program which allows the creation of an appointment from");
         System.out.println("command line arguments, and adds that appointment to an appointment book.");
         System.out.println("An appointment consists of a start time, an end time, and a description of");
         System.out.println("the appointment, which can be provided using the command line options described below.");
-        System.out.println("Additionally, the appointment book can be read or written to/from a specified file.\n");
+        System.out.println("Additionally, the appointment book can be read or written to/from a specified file, and\n");
+        System.out.println("a pretty printed version of the book can also be requested.");
         System.out.println("usage: [options] <args>");
         System.out.println("args are (in this order):");
         System.out.println("\towner\t\t\tThe person whose owns the appt book");
         System.out.println("\tdescription\t\tA description of the appointment");
-        System.out.println("\tbeginTime\t\tWhen the appt begins (24-hour time)");
-        System.out.println("\tendTime\t\t\tWhen the appt ends (24-hour time)");
+        System.out.println("\tbeginTime\t\tWhen the appt begins (12-hour time)");
+        System.out.println("\tendTime\t\t\tWhen the appt ends (12-hour time)");
         System.out.println("options are (options may appear in any order):");
         System.out.println("\t-print\t\t\tPrints a description of the new appointment");
         System.out.println("\t-textFile filename\tThe file to read/write from");
+        System.out.println("\t-pretty file\tPretty print the book to a text file or standard out (file -)");
         System.out.println("\t-README\t\t\tPrints a README for this project and exits");
-        System.out.println("Begin time and end time should be in the format: mm/dd/yyyy hh:mm");
+        System.out.println("Begin time and end time should be in the format: mm/dd/yyyy 12 hour time (06/06/2016 1:15 pm)");
         System.exit(0);
     }
 }

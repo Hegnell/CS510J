@@ -1,13 +1,14 @@
 // Gustaf Hegnell
-// Project 2
+// Project 3
 // CS 510J
-// 7/13/2016
+// 7/20/2016
 
 package edu.pdx.cs410J.hegnellg;
 
 import edu.pdx.cs410J.AbstractAppointmentBook;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collections;
 
 /**
  * This class represents an appointment book. An appointment book has an owner which is a represented by a String,
@@ -41,10 +42,11 @@ public class AppointmentBook extends AbstractAppointmentBook<Appointment> {
 
     /**
      *
-     * @return A list of all the appointments in the appointment book.
+     * @return A sorted list of all the appointments in the appointment book.
      */
     @Override
     public List<Appointment> getAppointments() {
+        Collections.sort(appointments);
         return appointments;
     }
 

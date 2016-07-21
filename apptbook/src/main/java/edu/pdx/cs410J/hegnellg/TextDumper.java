@@ -1,7 +1,7 @@
 // Gustaf Hegnell
-// Project 2
+// Project 3
 // CS 510J
-// 7/13/2016
+// 7/20/2016
 
 package edu.pdx.cs410J.hegnellg;
 
@@ -45,7 +45,7 @@ public class TextDumper implements AppointmentBookDumper {
         // Go through each appointment and write it out to the file.
         while (iterator.hasNext()) {
             Appointment appointment = (Appointment) iterator.next();
-            printWriter.println(appointment.getBeginTimeString() + "&&" + appointment.getEndTimeString() + "&&" + appointment.getDescription());
+            printWriter.println(appointment.getFullBeginString() + "&&" + appointment.getFullEndString() + "&&" + appointment.getDescription());
         }
 
         printWriter.flush();

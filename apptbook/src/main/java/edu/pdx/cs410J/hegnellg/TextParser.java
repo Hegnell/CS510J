@@ -1,7 +1,7 @@
 // Gustaf Hegnell
-// Project 2
+// Project 3
 // CS 510J
-// 7/13/2016
+// 7/20/2016
 
 package edu.pdx.cs410J.hegnellg;
 
@@ -80,24 +80,26 @@ public class TextParser implements AppointmentBookParser {
                 String[] beginInfo = beginTimeString.split(" ");
                 String[] endInfo = endTimeString.split(" ");
 
-                if (beginInfo.length != 2) {
+                if (beginInfo.length != 3) {
                     throw new ParserException("The start of appointment " + count + " was not formatted correctly in the text file.");
                 }
 
-                if (endInfo.length != 2) {
+                if (endInfo.length != 3) {
                     throw new ParserException("The end of appointment " + count + " was not formatted correctly in the text file.");
                 }
 
                 // Extract the time and dates to perform error checking.
                 String beginDate = beginInfo[0];
                 String beginTime = beginInfo[1];
+                String beginAMPM = beginInfo[2];
                 String endDate = endInfo[0];
                 String endTime = endInfo[1];
+                String endAMPM = endInfo[2];
 
                 // Perform error checking on the dates and times provided in the text file.
-                if (!validTime(beginTime)) {
+                if (!validTime(beginTime + " " + beginAMPM)) {
                     throw new ParserException("The begin time was not a valid time for appointment \"" + description + "\" in the text file.");
-                } else if (!validTime(endTime)) {
+                } else if (!validTime(endTime + " " + endAMPM)) {
                     throw new ParserException("The end time was not a valid time for appointment \"" + description + "\" in the text file.");
                 } else if (!validDate(beginDate)) {
                     throw new ParserException("The begin date was not a valid date for appointment \"" + description + "\" in the text file.");
@@ -129,11 +131,11 @@ public class TextParser implements AppointmentBookParser {
     /**
      *  This function takes a time and checks whether it is valid or not.
      *
-     * @param time A string representation of the time in hh:mm format.
+     * @param time A string representation of the time in 12 hour format..
      * @return A boolean, true if the time is a valid time in the correct format, false otherwise.
      */
     private boolean validTime(String time) {
-        return time.matches("([01]\\d|2[0-3]|[0-9]):[0-5]\\d");
+        return time.matches("(1[0-2]|[0-9]):[0-5]\\d\\s(am|pm|AM|PM)");
     }
 
     /**
