@@ -1,7 +1,7 @@
 // Gustaf Hegnell
-// Project 3
+// Project 4
 // CS 510J
-// 7/20/2016
+// 7/27/2016
 
 package edu.pdx.cs410J.hegnellg;
 
@@ -28,6 +28,16 @@ public class PrettyPrinter implements AppointmentBookDumper {
     public PrettyPrinter() {
         this.printWriter = null;
         this.printToFile = false;
+    }
+
+    /**
+     * Constructor that supports providing the printWriter to use from outside of this class.
+     *
+     * @param printWriter The printWriter to write to.
+     */
+    public PrettyPrinter(PrintWriter printWriter) {
+        this.printWriter = printWriter;
+        this.printToFile = true;
     }
 
     /**
@@ -92,3 +102,4 @@ public class PrettyPrinter implements AppointmentBookDumper {
         }
     }
 }
+

@@ -1,7 +1,7 @@
 // Gustaf Hegnell
-// Project 3
+// Project 4
 // CS 510J
-// 7/20/2016
+// 7/27/2016
 
 package edu.pdx.cs410J.hegnellg;
 
@@ -131,7 +131,7 @@ public class Appointment extends AbstractAppointment implements Comparable<Appoi
      * @param date The date in string format.
      * @return The date parsed from the string.
      */
-    private Date extractDate(String date) {
+    public Date extractDate(String date) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
         try {
             Date actualDate = simpleDateFormat.parse(date);
@@ -152,4 +152,20 @@ public class Appointment extends AbstractAppointment implements Comparable<Appoi
         long length = endTime.getTime() - beginTime.getTime();
         return length/1000/60;
     }
+
+    /**
+     * This function takes two arguments, a start date and an end date. It then determines whether this appointment occurs
+     * between those two times, and returns true if it does.
+     *
+     * @param start The start date.
+     * @param end The end date.
+     * @return True if this appointment occurs between the two times, false otherwise.
+     */
+    public boolean occursBetween(Date start, Date end) {
+        if (beginTime.compareTo(start) >= 0 && endTime.compareTo(end) <= 0) {
+            return true;
+        }
+        return false;
+    }
 }
+
